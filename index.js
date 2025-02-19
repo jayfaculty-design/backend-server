@@ -1,16 +1,20 @@
-let http = require("node:http");
-let fs = require("node:fs");
-let url = require("node:url");
+// let http = require("node:http");
+// let fs = require("node:fs");
+// let url = require("node:url");
+let fs = require("fs");
+let url = require("url");
+const express = require("express");
+const app = express();
+require("dotenv").config();
 
-let port = 3001;
-let errorPage = fs.readFile("404.html", "utf-8", (err, data) => {
+let port = process.env.port || 3001;
+let errorPage = fs.readFileSync("404.html", "utf-8", (err, data) => {
   if (err) {
     throw err;
   }
   return data;
 });
-
-let server = http.createServer((req, res) => {
+app.get("/*", (req, res) => {
   let q = url.parse(req.url, true);
   let filename = "";
   if (q.pathname === "/") {
@@ -30,4 +34,6 @@ let server = http.createServer((req, res) => {
   });
 });
 
-server.listen(port);
+app.listen(port, () => {
+  console.log(`Server running on ${port}`);
+});
